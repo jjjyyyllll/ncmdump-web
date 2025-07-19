@@ -40,7 +40,7 @@ git clone https://github.com/AthBe1337/ncmdump-web.git
 cd ncmdump-web
 mkdir build && cd build
 emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
-emmake make -j$nproc
+emmake make -j$(nproc)
 ```
 
 此时你将得到`ncmdump.js`和`ncmdump.wasm`，你可以将它集成到你的web页面中。
