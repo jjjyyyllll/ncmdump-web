@@ -4,6 +4,10 @@
 
 由[taurusxin/ncmdump](https://github.com/taurusxin/ncmdump/)移植而来。
 
+## 1.1 Note
+
+改进了传参方式，大幅提高了转换效率。
+
 ## 示例页面
 
 这是一个简单的示例页面，可以直接使用。
@@ -43,6 +47,8 @@ emmake make -j$nproc
 
 ### 调用方法示例
 
+传入参数为缓冲区指针和长度，返回typed_memory_view（Uint8Array）。
+
 `index.html`和`decrypt.worker.js`提供了一个简易的使用示例。以下是`decrypt.worker.js`。
 
 ```js
@@ -52,13 +58,12 @@ let wasmModule = null;
 let isWasmReady = false;
 
 createModule({
-    locateFile: (path) => path.endsWith('.wasm') ? './wasm/ncmdump.wasm' : path,
-    onRuntimeInitialized: function() {
-        wasmModule = this;
-        isWasmReady = true;
-        self.postMessage({ type: 'wasm-ready' });
-    }
-}).catch(err => {
+    locateFile: (path) => path.endsWith('.wasm') ? './wasm/ncmdump.wasm' : path
+}).then((instance) => {
+    wasmModule = instance;
+    isWasmReady = true;
+    self.postMessage({ type: 'wasm-ready' });
+}).catch((err) => {
     self.postMessage({
         type: 'error',
         error: `WASM加载失败: ${err.message}`
@@ -77,8 +82,14 @@ self.onmessage = async (e) => {
             const fileData = new Uint8Array(payload.fileData);
             const baseName = payload.baseNameWithoutExtension || "output";
 
-            // 此处调用wasm函数
-            const resultView = wasmModule.decryptNCM(fileData, baseName);
+            const inputDataPtr = wasmModule._malloc(fileData.length);
+            if (!inputDataPtr) {
+                throw new Error("无法为输入文件数据分配WASM内存");
+            }
+
+            wasmModule.HEAPU8.set(fileData, inputDataPtr);
+
+            const resultView = wasmModule.decryptNCM(inputDataPtr, fileData.length);
 
             const result = new Uint8Array(resultView.length);
             result.set(resultView);
@@ -99,6 +110,10 @@ self.onmessage = async (e) => {
                     error: error.message
                 }
             });
+        } finally {
+            if (inputDataPtr) {
+                wasmModule._free(inputDataPtr);
+            }
         }
     }
 };

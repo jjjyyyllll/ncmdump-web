@@ -57,6 +57,8 @@ if(EMSCRIPTEN)
           -sEXIT_RUNTIME=0
           #-sASSERTIONS=1
           -sNO_DISABLE_EXCEPTION_CATCHING
+          -sEXPORTED_FUNCTIONS=['_malloc','_free']
+          -sEXPORTED_RUNTIME_METHODS=['HEAPU8']
   )
 
   install(TARGETS ncmdump_wasm

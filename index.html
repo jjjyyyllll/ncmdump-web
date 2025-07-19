@@ -958,15 +958,17 @@
         }
       }
     };
-
+    updateProgress(0);
     for (let i = 0; i < pendingFiles.length; i++) {
       const file = pendingFiles[i];
       updateStatus(`正在转换 ${file.name} (${i + 1}/${pendingFiles.length})...`, "info");
-      updateProgress(0);
+      //updateProgress(0);
 
       try {
         const fileData = await readFileAsUint8Array(file);
-        updateProgress(10);
+        if (fileData.length === 1) {
+          updateProgress(10);
+        }
 
         const fileNameParts = file.name.split('.');
         const baseNameWithoutExtension = fileNameParts.slice(0, -1).join('.');
@@ -999,7 +1001,9 @@
         }, [fileData.buffer]);
 
         const decryptedUint8Array = await decryptPromise;
-        updateProgress(50);
+        if (fileData.length === 1) {
+          updateProgress(50);
+        }
 
         // --- 使用 jsmediatags 解析元数据 ---
         let title = baseNameWithoutExtension;
@@ -1044,7 +1048,9 @@
           }
         }
 
-        updateProgress(90);
+        if (fileData.length === 1) {
+          updateProgress(90);
+        }
 
         // Determine final output extension (MP3/FLAC) for download name
         let finalOutputExtension = ".mp3";
@@ -1078,22 +1084,23 @@
         });
 
         renderConvertedFileList();
-        updateProgress(100);
 
       } catch (err) {
         console.error(`转换文件 ${file.name} 失败:`, err);
         updateStatus(`转换 ${file.name} 失败: ${err.message || err}`, "error");
-        updateProgress(100);
       }
 
       // 清理 Promise 引用
       delete decryptPromises[i];
+
+      updateProgress(pendingFiles.length === 1 ? 100 : Math.round((i / pendingFiles.length) * 100));
 
       // 小延迟让 UI 更新
       await new Promise(resolve => setTimeout(resolve, 50));
     }
 
     updateStatus("所有文件转换完成！", "success");
+    updateProgress(100)
     document.getElementById('convertBtn').disabled = false;
     document.getElementById('selectBtn').disabled = false;
     document.getElementById('uploadArea').style.cursor = 'pointer';

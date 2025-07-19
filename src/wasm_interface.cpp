@@ -1,16 +1,16 @@
-#include <emscripten/bind.h>
-#include <emscripten/val.h>
 #include <vector>
 #include <string>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#include <emscripten/emscripten.h>
 #include "ncmcrypt.h"
 
 using namespace emscripten;
 
-val decryptNCM(const val &inputData, const std::string &outputBaseNameFromJS) {
+val decryptNCM(uintptr_t inputDataPtr, size_t inputDataSize) {
+    const uint8_t* input_data_raw = reinterpret_cast<const uint8_t*>(inputDataPtr);
 
-    std::vector<uint8_t> input_data_vector = vecFromJSArray<uint8_t>(inputData);
-
-    NeteaseCrypt crypt(input_data_vector.data(), input_data_vector.size());
+    NeteaseCrypt crypt(input_data_raw, inputDataSize);
     crypt.DumpToMemory();
     crypt.FixMetadata();
 
