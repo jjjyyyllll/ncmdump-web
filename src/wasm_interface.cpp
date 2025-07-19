@@ -1,13 +1,7 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include <vector>
-//#include <cstdio>
-//#include <stdexcept>
 #include <string>
-//#include <algorithm>
-//#include <iostream>
-//#include <dirent.h>
-//#include <sys/stat.h>
 #include "ncmcrypt.h"
 
 using namespace emscripten;
