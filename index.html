@@ -1149,7 +1149,7 @@
       });
 
       const content = await zip.generateAsync({ type: "blob" }, (metadata) => {
-        updateProgress(metadata.percent);
+        updateProgress(Math.round(metadata.percent));
       });
 
       const zipFileName = `ncm2mp3_${new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '')}.zip`;
