@@ -45,7 +45,7 @@ emmake make -j$(nproc)
 
 此时你将得到`ncmdump.js`和`ncmdump.wasm`，你可以将它集成到你的web页面中。
 
-### 调用方法示例
+## 调用方法示例
 
 传入参数为缓冲区指针和长度，返回typed_memory_view（Uint8Array）。
 
