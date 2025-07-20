@@ -931,6 +931,8 @@
     document.getElementById('convertBtn').disabled = true;
     document.getElementById('selectBtn').disabled = true;
     document.getElementById('uploadArea').style.cursor = 'not-allowed';
+    document.getElementById('addMoreBtn').disabled = true;
+    document.getElementById('clearListBtn').disabled = true;
 
     convertedFilesData.length = 0;  // 清空之前的数据
     document.getElementById('convertedFileList').innerHTML = '';
@@ -1107,6 +1109,8 @@
     document.getElementById('uploadArea').style.cursor = 'pointer';
     document.getElementById('downloadAllBtn').classList.remove('hidden');
     document.getElementById('downloadAllBtn').disabled = false;
+    document.getElementById('addMoreBtn').disabled = false;
+    document.getElementById('clearListBtn').disabled = false;
   }
 
   function renderConvertedFileList() {
