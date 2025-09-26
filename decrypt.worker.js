@@ -1,10 +1,10 @@
-import createModule from './wasm/ncmdump.js';
+import createModule from '/wasm/ncmdump.js';
 
 let wasmModule = null;
 let isWasmReady = false;
 
 createModule({
-    locateFile: (path) => path.endsWith('.wasm') ? './wasm/ncmdump.wasm' : path
+    locateFile: (path) => path.endsWith('.wasm') ? '/wasm/ncmdump.wasm' : path
 }).then((instance) => {
     wasmModule = instance;
     isWasmReady = true;
